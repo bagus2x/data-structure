@@ -11,7 +11,7 @@ import java.util.Iterator;
 */
 
 // Implement interface Iterable biar bisa di loop dgn for each
-public class MyDLinkedList<T> implements Iterable<T> {
+public class DoubleLinkedList<T> implements Iterable<T> {
     private int size;
     private Node<T> head;
     private Node<T> tail;

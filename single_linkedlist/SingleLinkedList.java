@@ -11,7 +11,7 @@ class Node<T> {
 
 // SingleLinkedList menggunakan generic jadi bisa menggunakan semua tipe data references/ UDT
 // Contoh: Float, Integer, Sepatu dll
-public class MyLinkedList<T> {
+public class SingleLinkedList<T> {
     private Node<T> head;
     private int size;
 
