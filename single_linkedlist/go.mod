@@ -1,3 +1,3 @@
-module github.com/bagus2x/asd
+module github.com/bagus2x/data-structure
 
 go 1.15
