@@ -7,10 +7,13 @@ class Node<T> {
     Node(T data) {
         this.data = data;
     }
+
+    Node(T data, Node<T> next) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
-// SingleLinkedList menggunakan generic jadi bisa menggunakan semua tipe data references/ UDT
-// Contoh: Float, Integer, Sepatu dll
 public class SingleLinkedList<T> {
     private Node<T> head;
     private int size;
@@ -20,17 +23,14 @@ public class SingleLinkedList<T> {
         size = 0;
     }
 
-    // Method getSize merupakan getter untuk mengakses atribut size
     public int getSize() {
         return size;
     }
 
-    // Method isEmpty untuk menegecek apakah container ini kosong
     public boolean isEmpty() {
         return size == 0;
     }
 
-    // Mendapatkan value berdasar index
     public T get(int index) {
         if(index < 0 || index > size - 1) throw new IndexOutOfBoundsException();
         Node<T> current =  head;
@@ -41,31 +41,21 @@ public class SingleLinkedList<T> {
                 break;
             }
             current =  current.next;
-
         }
         return res;
     }
 
-    /*
-        Ada empat jenis method 'add'
-        -> add(int index, T data), tambah setelah index tertentu
-        -> addOneAfter(T prev, T data), tambah setelah value tertentu
-        -> addLast(T data) atau sama dengan add(T data), tambah ke paling akhir
-        -> addFirst(T data), tambah ke paling awal
-    */
     public void add(int index, T data) {
-        if(index < 0 || index > size - 1) throw new IndexOutOfBoundsException();
+        if(index < 0 || index > size) throw new IndexOutOfBoundsException();
         if(index == 0) {
             addFirst(data);
             return;
         }
-        Node<T> node = new Node<T>(data);
         Node<T> current =  head;
         for(int i=0; i < index-1; i++) {
             current =  current.next;
-        }
-        node.next = current.next;
-        current.next = node;
+        } 
+        current.next = new Node<T>(data, current.next);
         size++;
     }
 
@@ -76,17 +66,15 @@ public class SingleLinkedList<T> {
         }else {
             Node<T> current =  head;
             while(current.next != null) {
-                current =  current.next; // jika sampai loop terakhir, berarti current =  {data: value, next: null}
+                current =  current.next;
             }
             current.next = node;
         }
         size++;
     }
 
-    public void addFirst(T data) {
-        Node<T> node = new Node<T>(data);
-        node.next = head;
-        head = node;
+    public void addFirst(T data) {;
+        head = new Node<T>(data, head);
         size++;
     }
 
@@ -95,7 +83,6 @@ public class SingleLinkedList<T> {
     }
 
     public void addOneAfter(T prev, T data) {
-        Node<T> node = new Node<>(data);
         if(head.data == prev) {
             add(1, data);
         }else {
@@ -103,8 +90,7 @@ public class SingleLinkedList<T> {
             while(current.next != null) {
                 current = current.next;
                 if(current.data.equals(prev)) {
-                    node.next = current.next;
-                    current.next = node;
+                    current.next = new Node<>(data, current.next);
                     break;
                 }
             }
@@ -112,12 +98,6 @@ public class SingleLinkedList<T> {
         size++;
     }
 
-    /*
-        Ada tiga jenis method replace
-        -> replace(int index, T data), replace berdasarkan index ternetu
-        -> replaceOne(T before, T after), replace satu node berdasarkan value tertentu
-        -> replaceAll(T before, T after), replace semua node berdasarkan value tertentu
-    */
     public void replace(int index, T data) {
         if(index > size - 1) throw new IndexOutOfBoundsException();
         Node<T> current =  head;
@@ -151,12 +131,6 @@ public class SingleLinkedList<T> {
         }
     }
 
-    /*
-        Ada tiga jenis method remove
-        -> remove(int index), remove berdasar index
-        -> removeFirst(), remove kepala
-        -> removeLast(), ekor
-    */
     public void remove(int index) {
         if(index > size - 1 || index <= 0) throw new IndexOutOfBoundsException();
         Node<T> current =  head;
@@ -201,13 +175,12 @@ public class SingleLinkedList<T> {
         size--;
     }
 
-
     public String toString() {
         Node<T> current =  head;
         String res = "[";
         while(current != null) {
             res += current.data;
-            current =  current.next; // current =  ekor. dan buntut ekor selalu null
+            current =  current.next;
             if(current != null) {
                 res += ", ";
             }
