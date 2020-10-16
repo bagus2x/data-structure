@@ -48,8 +48,6 @@ class Stack<T> {
 
     @SafeVarargs
     final public void unshift(T ...data) {
-        System.out.println(Arrays.toString(data));
-        System.out.println(data[data.length-1]);
         for(int i = data.length - 1; i >= 0; i--) {
             unshift(data[i]);
         }
