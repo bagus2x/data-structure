@@ -1,6 +1,7 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-public class CircularDoubleLinkedList<T> implements Iterable<T> {
+public class CircularDoubleLinkedList<T> implements Double<T> {
     private int size;
     private Node<T> head;
     private Node<T> tail;
@@ -26,12 +27,6 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
         return tail;
     }
 
-    /*
-        get(int index) <- pengaksesan berdasar index
-        getFisrt() <- pengasesan value pertama
-        getLast() <- pengaksesan value terakhir
-    */
-
     public T get(int index) {
         if( index < 0 || index > size - 1) throw new IndexOutOfBoundsException();
         Node<T> current = head;
@@ -52,12 +47,6 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
         return tail.data;
     }
 
-    /*
-        add(T data) <- Menambahkan data di ekor
-        add(int index, T data) <- Menambahkan data di index tertentu
-        addFirst(T data) <- Menambahkan data di kepala
-        addLast(T data) <- Menambahkan data di ikor
-    */
     public void add(T data) {
         if (head == null) {
             head = tail =  new Node<T>(data);
@@ -99,6 +88,26 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
         add(data);
     }
 
+    public void addAfter(T key, T data) {
+        if(head == null) {
+            head = tail = new Node<T>(data);
+            size++;
+            return;
+        }
+        Node<T> current = head;
+        for(int i = 0; i < size; i++) {
+            if(current.data.equals(key)) {
+                current.next = new Node<T>(current, data, current.next);
+                if(i == size - 1) {
+                    head.prev = tail = current.next;
+                }
+                size++;
+                return;
+            }
+            current = current.next;
+        }
+    }
+
     public void remove(int index) {
         if( index < 0 || index > size - 1) throw new IndexOutOfBoundsException();
         if(index == 0) {
@@ -116,13 +125,6 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
         size--;
     }
 
-    /*
-        remove(int index) <- Penghapusan berdasarkan index
-        removeOne(T data) <- Penghapusan satu aja berdasar value 
-        removeAll(T data) <- Penghapusan semua sesuai dengan value parameter
-        removeFirst() <- Penghapusan kepala
-        removeLast() <- Penghapusan Ekor
-    */
     public void removeOne(T data) {
         removeByValue(data, true);
     }
@@ -133,7 +135,7 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
 
     
     public void removeFirst() {
-        if(head == null) throw new IndexOutOfBoundsException();
+        if(head == null) throw new NoSuchElementException();
         head = head.next;
         tail.next = head;
         head.prev = tail;
@@ -141,7 +143,7 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
     }
 
     public void removeLast() {
-        if(head == null) throw new IndexOutOfBoundsException();
+        if(head == null) throw new NoSuchElementException();
         tail = tail.prev;
         tail.next = head;
         head.prev = tail;
@@ -180,11 +182,6 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
         }
     }
 
-    /*
-        replace(int index, T data) <- Replace berdasarkan index
-        replaceOne(T prev, T data) <- Replace berdasarkan value sekali
-        replaceAll(T prev, T data) <- Replace berdasarkan value semua
-    */
     public void replaceOne(T prev, T data) {
        replaceByValue(prev, data, true);
     }
@@ -204,14 +201,13 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
         }
     }
 
-    // Pengaksesan seluruh elemen dengan tipe kembalian Strin
     public String toString() {
-        Node<T> current = head;
         String res = "[";
-        for(int i = 0; i < size; i++) {
-            res += current.data;
-            current = current.next;
-            if (i != size-1) {
+        int i = 0;
+        for(T e: this) {
+            res += e;
+            i++;
+            if(i != getSize()) {
                 res += ", ";
             }
         }
@@ -225,15 +221,11 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
             private Node<T> current = head;
             private int i = 0;
 
-            // Cek kondisi
             @Override
             public boolean hasNext() {
-                var bool = size !=  i;
-                i++;
-                return bool;
+                return size != i++;
             }
 
-            // Berpindah antar value
             @Override
             public T next() {
                 T data = current.data;
