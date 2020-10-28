@@ -194,6 +194,7 @@ public class CircularDoubleLinkedList<T> implements Double<T> {
         Node<T> current = head;
         for(int i = 0; i < size; i++) {
             if(current.data.equals(prev)) {
+                current.next.next.prev = current;
                 current.data = data;
                 if(once) break;
             }
