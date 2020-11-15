@@ -7,7 +7,7 @@ public class Polish {
      * b. Ubah ke postfix.
      * c. Reversi hasil dari postfix tadi.
     */
-    public static LinkedList<String> InfixToPrefix(String infix) {
+    public static LinkedList<String> infixToPrefix(String infix) {
         StringBuilder reversedInfix = new  StringBuilder();
         LinkedList<String> prefix = new LinkedList<>();
         LinkedList<String> postfix;
@@ -20,7 +20,7 @@ public class Polish {
             }
             reversedInfix.insert(0, Character.toString(symbol)); // dibalik
         }
-        postfix = InfixToPosfix(reversedInfix.toString());
+        postfix = infixToPosfix(reversedInfix.toString());
         for(String p: postfix) {
             prefix.addFirst(p);
         }
@@ -41,14 +41,13 @@ public class Polish {
      *    pop operator tsb dan tambahkan ke P. - Push operator tersebut ke stack.
      * f. Keluar
      */
-    public static LinkedList<String> InfixToPosfix(String infix) {
-        LinkedList<String> splittedInfix = splitInfix(infix);
+    public static LinkedList<String> infixToPosfix(String infix) {
         LinkedList<String> p = new LinkedList<>();
         Stack<String> operator = new Stack<>();
-        splittedInfix.add(")");
+        infix += ")";
         operator.add("(");
 
-        for (String i : splittedInfix) {
+        for (String i : infix.split("")) {
             if (i.matches("[+*^/-]")) { // test buat coba2 regex https://regexr.com/
                 if (getPriotity(operator.peek()) >= getPriotity(i)) {
                     p.add(operator.pop());
@@ -71,12 +70,53 @@ public class Polish {
         return p;
     }
 
-    public static LinkedList<String> splitInfix(String infix) {
-        LinkedList<String> splittedInfix = new LinkedList<>();
-        for (String symbol : infix.split("")) {
-            splittedInfix.add(symbol);
+    /*
+     * 1.Tambahkan tanda “)” pada sentinel di P 
+     * 2.Scan P dari kiri ke kanan, ulangi
+     *   langkah c dan d untuk setiap elemen P sampai ditemukan sentinel. 
+     * 3.Jika yang
+     *   discan adalah operand, maka push ke stack.
+     * 4.Jika yang discan adalah operator
+     *   (sebut opr1), maka  Pop 1 buah elemen teratas dari stack, simpan dalam
+     *   variable var1.  Pop 1 buah elemen teratas dari stack, simpan dalam variable
+     *   var2.  Hitung variable (var2 opr1 var1), simpan hasil di variable hitung. 
+     *   Push variable hitung ke stack. 
+     * 5.Pop isi stack dan simpan di variable value.
+     * 6.Keluar.
+     */
+    public static String postfixToInfix(String postfix) {
+        Stack<String> stack = new Stack<>();
+        String value;
+        for(String s: postfix.split("")) {
+            if(getPriotity(s) == -1) {
+                stack.push(s);
+            }else {
+                String var1 = stack.pop();
+                String var2 = stack.pop();
+                String res = "(" + var2 + s + var1 + ")";
+                stack.push(res);
+            }
         }
-        return splittedInfix;
+        value = stack.pop();
+        return value;
+    }
+
+    public static String prefixToInfix(String prefix) {
+        Stack<String> stack = new Stack<>();
+        String splittedPrefix[] = prefix.split("");
+        String value;
+        for(int i = splittedPrefix.length - 1; i >= 0; i--) {
+            if(getPriotity(splittedPrefix[i]) != -1) {
+                String var1 = stack.pop();
+                String var2 = stack.pop();
+                String res = "(" + var1 + splittedPrefix[i] + var2 + ")";
+                stack.push(res);
+            }else {
+                stack.push(splittedPrefix[i]);
+            }
+        }
+        value = stack.pop();
+        return value;
     }
 
     static int getPriotity(String symbol) {
