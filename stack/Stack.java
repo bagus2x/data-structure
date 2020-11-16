@@ -53,23 +53,26 @@ class Stack<T> {
     }
 
     public T shift() {
-        if (size == 0)
+        if (size == 0) {
             new EmptyStackException();
+        }    
         T shiftData = head.data;
         removeFirst();
         return shiftData;
     }
 
     public void removeFirst() {
-        if (size == 0)
-            new EmptyStackException();
+        if (size == 0) {
+            throw new EmptyStackException();
+        }
         head = head.next;
         size--;
     }
 
     public T pop() {
-        if (size == 0)
+        if (size == 0) {
             throw new EmptyStackException();
+        }
         T popData = tail.data;
         removeLast();
         return popData;
